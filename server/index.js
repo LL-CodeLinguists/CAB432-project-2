@@ -23,19 +23,38 @@ var client = new Twitter({
  * Stream statuses filtered by keyword
  * number of tweets per second depends on topic popularity
  **/
-client.stream('statuses/filter', {track: 'twitter'},  function(stream) {
-  stream.on('data', function(tweet) {
-    console.log(tweet.text);
-  });
 
-  stream.on('error', function(error) {
-    console.log(error);
+function clientStream(client){
+  client.stream('statuses/filter', {track: 'twitter'},  function(stream) {
+    stream.on('data', function(tweet) {
+      // console.log(tweet.text);
+      return JSON.stringify(tweet.text);
+    });
+  
+    stream.on('error', function(error) {
+      console.log(error);
+    });
   });
-});
+}
+// client.stream('statuses/filter', {track: 'twitter'},  function(stream) {
+//   stream.on('data', function(tweet) {
+//     console.log(tweet.text);
+//   });
+
+//   stream.on('error', function(error) {
+//     console.log(error);
+//   });
+// });
 
 // What's your favorite animal?
 app.get('/api/question', (req, res) => {
   res.json({ answer: 'Llama' })
+})
+
+
+
+app.get('/tweet/stream', (req, res) => {
+  res.json({tweet: clientStream(client)})
 })
 
 // New api routes should be added here.

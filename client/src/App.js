@@ -22,7 +22,22 @@ const FavoriteAnimal = ({ url }) => {
 
 
 const GetComment = ({ url }) => {
-  const []
+  const [ Comment, setComment ] = useState(null);
+
+  useEffect(() => {
+    fetch(url)
+      .then(res => res.json())
+      .then(res => setComment(res))
+			.catch(() => null);
+	}, []);
+
+  if (Comment !== null) {
+    return (
+      <p>Your favorite animal is a {Comment.tweet}!</p>
+    )
+  }
+
+  return null;
 }
 
 function App() {
@@ -30,7 +45,8 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          <FavoriteAnimal url="/api/question" />
+          {/* <FavoriteAnimal url="/api/question" /> */}
+          <GetComment url="/tweet/stream" />
         </p>
       </header>
     </div>
