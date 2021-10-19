@@ -45,8 +45,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          {/* <FavoriteAnimal url="/api/question" /> */}
-          <GetComment url="/tweet/stream" />
+          <GetComment url="/tweet/search" />
         </p>
       </header>
     </div>

@@ -1,6 +1,6 @@
 const path = require('path')
 const express = require('express')
-const axios = require('axios')
+const axios = require('axios').default;
 const Twitter = require('twitter');
 const app = express()
 const port = 3000
@@ -9,42 +9,20 @@ const port = 3000
 app.use(express.static('../client/build'))
 
 
-//twitter JWT
-var client = new Twitter({
-  consumer_key: 'kjIOyV8nga2VTJSZQ7eb8c3ut',
-  consumer_secret: '4UgYx9wDjGFrzS4AnGIfXQqnVk6vowdl0Yx8X65iiXIqXy5rQC',
-  access_token_key: '1433642779314311171-yFSBGOCtm5qOxQo2rDR4cWyC9X0Wvw',
-  access_token_secret: 'A1wPzENn2NfZ209XtIgkeLGm5SUSnTUlV8pIusY3oPRpR'
-});
+let query = "Apple"
+let bearToken = `AAAAAAAAAAAAAAAAAAAAABgCUwEAAAAAulp6nbJYV0eZsgfF%2F35nkcbcfxg%3DOZypHZyuxqwyuai3ngiy2ZUiW4pMCgk93c5Qk8M3jxhsLHU0be`
 
 
-
-/**
- * Stream statuses filtered by keyword
- * number of tweets per second depends on topic popularity
- **/
-
-function clientStream(client){
-  client.stream('statuses/filter', {track: 'twitter'},  function(stream) {
-    stream.on('data', function(tweet) {
-      // console.log(tweet.text);
-      return JSON.stringify(tweet.text);
-    });
-  
-    stream.on('error', function(error) {
-      console.log(error);
-    });
-  });
+var recent_tweet = {
+  method: "GET",
+  url: `https://api.twitter.com/2/tweets/search/recent?query=${query}`,
+  headers: {
+    'Authorization': `Bearer ${bearToken}`
+  }
 }
-// client.stream('statuses/filter', {track: 'twitter'},  function(stream) {
-//   stream.on('data', function(tweet) {
-//     console.log(tweet.text);
-//   });
 
-//   stream.on('error', function(error) {
-//     console.log(error);
-//   });
-// });
+
+
 
 // What's your favorite animal?
 app.get('/api/question', (req, res) => {
@@ -53,8 +31,17 @@ app.get('/api/question', (req, res) => {
 
 
 
-app.get('/tweet/stream', (req, res) => {
-  res.json({tweet: clientStream(client)})
+//search recent tweet
+app.get('/tweet/search', (req, res) => {
+  axios.request(recent_tweet)
+    .then(function (res){
+      const data = res.data;
+      console.log(data)
+    })
+    .catch(err =>
+    {
+      console.log(err)
+    })
 })
 
 // New api routes should be added here.
