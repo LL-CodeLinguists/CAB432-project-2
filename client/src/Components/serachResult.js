@@ -5,15 +5,30 @@ function useQuery() {
     return new URLSearchParams(useLocation().search);
   }
 
+
+function SearchAllTweets(searchTerm){
+    const url = "/api/tweet/search?q=" + searchTerm
+
+    useEffect(
+        () => {
+            fetch(url)
+            .then(res => res.json())
+            .then(res => console.log(res))
+        }
+    , [url])
+
+}
+
 function SearchResult(){
     
     const query = useQuery()
-    const queryString = query.toString()
-    
+    const searchTerm = query.get("q")
 
+    SearchAllTweets(searchTerm)
+    
     return(
         <div>
-            {query}
+            {searchTerm}
         </div>
     )
 }

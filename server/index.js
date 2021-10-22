@@ -10,22 +10,25 @@ const port = 3000
 app.use(express.static('../client/build'))
 
 
-let query = "Apple"
+
 let bearToken = `AAAAAAAAAAAAAAAAAAAAABgCUwEAAAAAulp6nbJYV0eZsgfF%2F35nkcbcfxg%3DOZypHZyuxqwyuai3ngiy2ZUiW4pMCgk93c5Qk8M3jxhsLHU0be`
 
 
-var all_tweets = {
-  method: "GET",
-  url: `https://api.twitter.com/2/tweets/search/all?query=${query}`,
-  headers: {
-    'Authorization': `Bearer ${bearToken}`
-  }
-}
 
 
 //search recent tweet
-app.get('/tweet/search', (req, res) => {
-  axios.request(recent_tweet)
+app.get('/api/tweet/search', (req, res) => {
+
+  let query = req.query
+  console.log(query)
+  var searchInAllTweets = {
+    method: "GET",
+    url: `https://api.twitter.com/1.1/search/tweets.json?q=${query.q}`,
+    headers: {
+      'Authorization': `Bearer ${bearToken}`
+    }
+  }
+  axios.request(searchInAllTweets)
     .then(response => {
       res.json(response.data)
       }
