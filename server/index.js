@@ -14,9 +14,9 @@ let query = "Apple"
 let bearToken = `AAAAAAAAAAAAAAAAAAAAABgCUwEAAAAAulp6nbJYV0eZsgfF%2F35nkcbcfxg%3DOZypHZyuxqwyuai3ngiy2ZUiW4pMCgk93c5Qk8M3jxhsLHU0be`
 
 
-var recent_tweet = {
+var all_tweets = {
   method: "GET",
-  url: `https://api.twitter.com/2/tweets/search/recent?query=${query}`,
+  url: `https://api.twitter.com/2/tweets/search/all?query=${query}`,
   headers: {
     'Authorization': `Bearer ${bearToken}`
   }
