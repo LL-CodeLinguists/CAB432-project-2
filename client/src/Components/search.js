@@ -57,7 +57,7 @@ function SearchBar({placeholder}){
                     onChange={handleFilter}
                     />
 
-                <button type="submit">dick</button>
+                <button className="submitButton" type="submit"></button>
 
             </form>
 
