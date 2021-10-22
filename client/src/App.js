@@ -22,22 +22,19 @@ const FavoriteAnimal = ({ url }) => {
 
 
 const GetComment = ({ url }) => {
-  const [ Comment, setComment ] = useState(null);
+  const [ comment, setComment ] = useState(null);
 
   useEffect(() => {
     fetch(url)
       .then(res => res.json())
-      .then(res => setComment(res))
+      .then(res => console.log(res))
 			.catch(() => null);
 	}, []);
 
-  if (Comment !== null) {
-    return (
-      <p>Your favorite animal is a {Comment.tweet}!</p>
-    )
-  }
 
-  return null;
+  return (
+    <p>DIck!</p>
+  )
 }
 
 function App() {

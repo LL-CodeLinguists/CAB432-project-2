@@ -2,6 +2,7 @@ const path = require('path')
 const express = require('express')
 const axios = require('axios').default;
 const Twitter = require('twitter');
+const { response } = require('express');
 const app = express()
 const port = 3000
 
@@ -22,22 +23,13 @@ var recent_tweet = {
 }
 
 
-
-
-// What's your favorite animal?
-app.get('/api/question', (req, res) => {
-  res.json({ answer: 'Llama' })
-})
-
-
-
 //search recent tweet
 app.get('/tweet/search', (req, res) => {
   axios.request(recent_tweet)
-    .then(function (res){
-      const data = res.data;
-      console.log(data)
-    })
+    .then(response => {
+      res.json(response.data)
+      }
+    )
     .catch(err =>
     {
       console.log(err)
