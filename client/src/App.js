@@ -1,25 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-
-const FavoriteAnimal = ({ url }) => {
-  const [ favoriteAnimal, setFavoriteAnimal ] = useState(null);
-
-  useEffect(() => {
-    fetch(url)
-      .then(res => res.json())
-      .then(res => setFavoriteAnimal(res))
-			.catch(() => null);
-	}, []);
-
-  if (favoriteAnimal !== null) {
-    return (
-      <p>Your favorite animal is a {favoriteAnimal.answer}!</p>
-    )
-  }
-
-  return null;
-}
-
+import Home from "./home"
+import Nav from './Components/navbar';
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 const GetComment = ({ url }) => {
   const [ comment, setComment ] = useState(null);
@@ -33,18 +16,21 @@ const GetComment = ({ url }) => {
 
 
   return (
-    <p>DIck!</p>
+    <p>Dick!</p>
   )
 }
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <p>
-          <GetComment url="/tweet/search" />
-        </p>
-      </header>
+    <BrowserRouter>
+      <div className="App">
+        <Nav />
+        <Switch>
+          <Route path="/" exact component={Home} />
+        </Switch>
+      </div>
+    </BrowserRouter>
     </div>
   );
 }
