@@ -6,6 +6,22 @@ import  "../CSS/search.css";
 
 
 
+function Dropdown({countries}){
+
+    return(
+        <div className="dropdown">
+            <div className="selected-value"> Select location</div>
+            <div className="arrow" />
+
+            <div className="options">
+             {
+                 countries.map(country => <div className="option">{country.name}</div>)
+             }
+            </div>
+        </div>
+    )
+}
+
 
 
 function SearchBar({placeholder}){
@@ -20,9 +36,24 @@ function SearchBar({placeholder}){
         history.push({
             pathname: "/search",
             search: params})
-    
-    
     }
+
+    function GetCountries(){
+        const url = "/api/countires"
+
+        
+        useEffect(
+            () => {
+                fetch(url)
+                .then(res => res.json())
+                .then(res => console.log(res))
+            }
+        , [])
+
+    }
+
+    GetCountries()
+
     const handleFilter = (event) => {
         const searchWord = event.target.value 
   
