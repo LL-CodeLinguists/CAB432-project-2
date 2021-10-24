@@ -6,22 +6,42 @@ import  "../CSS/search.css";
 
 
 
-function Dropdown({countries}){
+function Dropdown(props){
+    const countries = props.countries
+    const [open, setOpen] = useState(false)
+
 
     return(
         <div className="dropdown">
-            <div className="selected-value"> Select location</div>
-            <div className="arrow" />
-
-            <div className="options">
+            <div className="control" onClick={() => setOpen((prev) => !prev)}>
+                <div className="selected-value">{props.prompt}</div>
+                <div  className={`arrow ${open ? "open" : null}`}/>
+            </div> 
+            <div className={`options ${open ? "open" : null}`}>
              {
-                 countries.map(country => <div className="option">{country.name}</div>)
+                 countries.map(country => <div className="option">{country.name.common}</div>)
              }
             </div>
         </div>
     )
 }
 
+function GetCountries(){
+    const url = "/api/countries"
+    const [countries, setCountries] = useState([])
+
+    useEffect(
+        () => {
+            fetch(url)
+            .then(res => res.json())
+            .then(res => {
+                setCountries(res)
+            })
+        }
+    , [])
+
+    return countries
+}
 
 
 function SearchBar({placeholder}){
@@ -30,7 +50,6 @@ function SearchBar({placeholder}){
     const history = useHistory()
     const [parameter, setParameter] = useState("")
 
-
     function GetTweets(params){
         console.log("ack")
         history.push({
@@ -38,21 +57,10 @@ function SearchBar({placeholder}){
             search: params})
     }
 
-    function GetCountries(){
-        const url = "/api/countires"
 
-        
-        useEffect(
-            () => {
-                fetch(url)
-                .then(res => res.json())
-                .then(res => console.log(res))
-            }
-        , [])
+    const countries = GetCountries()
 
-    }
-
-    GetCountries()
+    console.log(countries)
 
     const handleFilter = (event) => {
         const searchWord = event.target.value 
@@ -87,6 +95,11 @@ function SearchBar({placeholder}){
                     placeholder={placeholder} 
                     onChange={handleFilter}
                     />
+
+                <Dropdown countries={countries} 
+                          prompt='Select country...'
+                          
+                          />
 
                 <button className="submitButton" type="submit"></button>
 
