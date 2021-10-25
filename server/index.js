@@ -14,6 +14,19 @@ const twitterAPI = "https://api.twitter.com/1.1"
 const bearToken = `AAAAAAAAAAAAAAAAAAAAABgCUwEAAAAAulp6nbJYV0eZsgfF%2F35nkcbcfxg%3DOZypHZyuxqwyuai3ngiy2ZUiW4pMCgk93c5Qk8M3jxhsLHU0be`
 
 
+app.get("/api/countries", (req, res) => {
+
+  const url = "https://restcountries.com/v3.1/all"
+
+  axios.get(url)
+    .then(response => res.json(response.data))
+
+    .catch(e => {
+      console.log(e)
+    })
+})
+
+
 
 //search recent tweet
 app.get('/api/tweet/search', (req, res) => {
