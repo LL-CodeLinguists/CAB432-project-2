@@ -35,11 +35,17 @@ bucketPromise.then(function(data) {
   .catch(function(err) { console.error(err, err.stack);
   });
 
-  //store data in Redis
-  function StoreData(query, responseJSON){
+  //store data in Redis --- twitter
+  function StoreTwitterData(query, responseJSON){
 
     return client.setex(`twitter:${query}`, 3600, JSON.stringify({ source: 'Redis Cache', ...responseJSON, }));
   }
+
+    //store data in Redis --- country
+    function StoreTwitterData(query, responseJSON){
+
+      return client.setex(`restcountries API: ${query}`, 3600, JSON.stringify({ source: 'Redis Cache', ...responseJSON, }));
+    }
 
 
 
@@ -60,6 +66,63 @@ const bearToken = `AAAAAAAAAAAAAAAAAAAAABgCUwEAAAAAulp6nbJYV0eZsgfF%2F35nkcbcfxg
 
 
 
+app.get("/api/countries", (req, res) => {
+
+  let country = `https://restcountries.com/v3.1/all/api/countries`
+
+
+  const s3Key = `restcountries API: ${country}`; // Check S3
+  const params = { Bucket: bucketName, Key: s3Key};
+  // Try fetching the result from Redis first in case we have it cached
+
+  const url = "https://restcountries.com/v3.1/all"
+
+  return client.get(`restcountries API: ${country}`, (err, result) =>{
+
+    if(result){
+
+      const resultJSON = JSON.parse(result);
+      // console.log(resultJSON)
+      return res.status(200).json(resultJSON);
+
+    }else{
+      
+      return new AWS.S3({apiVersion: '2006-03-01'}).getObject(params, (err, result2) => { 
+
+        if(result2){
+
+          // Serve from S3
+          console.log(result2);
+          const resultJSON = JSON.parse(result2.Body);
+          StoreData(country, resultJSON) 
+          return res.status(200).json(resultJSON);
+
+        }
+        else{
+  
+          axios.get(url)
+          .then(response => {
+            const responseJSON = response.data;
+            // Save the Wikipedia API response in Redis store
+            client.setex(`restcountries API: ${country}`, 3600, JSON.stringify({ source: 'Redis Cache',...responseJSON, }));
+
+            const body = JSON.stringify({ source: 'S3 Bucket', ...responseJSON}); 
+            const objectParams = {Bucket: bucketName, Key: s3Key, Body: body}; 
+            const uploadPromise = new AWS.S3({apiVersion: '2006-03-01'}).putObject(objectParams).promise(); 
+            return res.status(200).json({ source: 'restcountries API', ...responseJSON, });
+          })
+          .catch(e => {
+            console.log(e)
+          })
+        }
+      })
+    }
+  }) 
+})
+  
+
+
+
 
 //search recent tweet
 app.get('/api/tweet/search', (req, res) => {
@@ -67,7 +130,7 @@ app.get('/api/tweet/search', (req, res) => {
   let query = req.query
   // console.log(query.q)
 
-  const s3Key = `twitter-${query.q}`; // Check S3
+  const s3Key = `twitter:${query.q}`; // Check S3
   const params = { Bucket: bucketName, Key: s3Key};
   // Try fetching the result from Redis first in case we have it cached
 
@@ -81,21 +144,26 @@ app.get('/api/tweet/search', (req, res) => {
 
   return client.get(`twitter:${query.q}`, (err, result) =>{
     
+    //check redis first
     if(result){
       const resultJSON = JSON.parse(result);
       // console.log(resultJSON)
       return res.status(200).json(resultJSON);
     }
     else{
+
+      //check s3
         return new AWS.S3({apiVersion: '2006-03-01'}).getObject(params, (err, result2) => { 
 
         if (result2) {
             // Serve from S3
             console.log(result2);
             const resultJSON = JSON.parse(result2.Body);
-            StoreData(query.q, resultJSON) 
+            StoreTwitterData(query.q, resultJSON) 
             return res.status(200).json(resultJSON);
         }
+
+        //fetch data from twitter api 
         else{
           axios.request(searchInRecentTweets)
           .then(response => {
