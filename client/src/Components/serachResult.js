@@ -46,13 +46,13 @@ function SearchResult(){
     if (loading){
         return(
             <div>
-                <h1>Loading...</h1>
+                <h1 className="loading">Loading...</h1>
             </div>
         )
     }else{
         return(
             <div>
-                <h1 className="search-heading">Found {tweets.length} tweets! {tweets.length == 0 ? "Please use other terms!" : ""}</h1>
+                <h1 className="search-heading">Found {tweets.length} tweets containing '{searchTerm}' {hashtag == null ? '' : "with hashtag #" + hashtag} {type == null ? '' : "in " + type + " order"}! {tweets.length == 0 ? "Please use other terms!" : ""}</h1>
                 <div className="results">
                 <Row xs={1} md={4} className="g-4">
                 {tweets.map(tweet => (

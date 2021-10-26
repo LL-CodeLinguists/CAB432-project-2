@@ -90,7 +90,7 @@ function SearchBar({placeholder}){
             
 
             <input className="hashtag" type="text" 
-                    placeholder="Enter a hashtag"
+                    placeholder="Enter a hashtag without #(Optional)"
                     onChange={handleHashtag}
                     />
             </form>
