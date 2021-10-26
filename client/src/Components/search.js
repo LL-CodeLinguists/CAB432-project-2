@@ -1,30 +1,29 @@
 import React, { useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom"
+import { Dropdown } from 'semantic-ui-react'
 import  "../CSS/search.css";
 
 
-
-
-
-function Dropdown(props){
-    const countries = props.countries
-    const [open, setOpen] = useState(false)
-
-
+function CountryDropDown(props){
+    const [values, setValue] = useState(null)
+    function handleChange(e, {value}){
+        setValue(e.target.textContent)
+    }
     return(
-        <div className="dropdown">
-            <div className="control" onClick={() => setOpen((prev) => !prev)}>
-                <div className="selected-value">{props.prompt}</div>
-                <div  className={`arrow ${open ? "open" : null}`}/>
-            </div> 
-            <div className={`options ${open ? "open" : null}`}>
-             {
-                 countries.map(country => <div className="option">{country.name.common}</div>)
-             }
-            </div>
+        <div>
+            <Dropdown
+            placeholder='Select Country(Optional)'
+            search
+            selection
+            clearable
+            lazyLoad
+            button
+            onChange={handleChange}
+            options={props.countries}
+            />
         </div>
     )
-}
+  }
 
 function GetCountries(){
     const url = "/api/countries"
@@ -40,15 +39,23 @@ function GetCountries(){
         }
     , [])
 
-    return countries
+    const countryOptions = countries.map(country => (        {
+        key: country.alpha2Code.toLowerCase(),
+        value: country.alpha2Code.toLowerCase(),
+        flag: country.alpha2Code.toLowerCase(),
+        text: country.name
+    }))
+
+    return countryOptions
 }
 
 
 function SearchBar({placeholder}){
-    const [filteredData, setFilteredData] = useState([])
     const [query, setQuery] = useState("")
     const history = useHistory()
     const [parameter, setParameter] = useState("")
+
+    const countries = GetCountries()
 
     function GetTweets(params){
         console.log("ack")
@@ -57,10 +64,6 @@ function SearchBar({placeholder}){
             search: params})
     }
 
-
-    const countries = GetCountries()
-
-    console.log(countries)
 
     const handleFilter = (event) => {
         const searchWord = event.target.value 
@@ -90,20 +93,17 @@ function SearchBar({placeholder}){
             className="searchInputs"
             onSubmit={handleSubmit}
             >
-
                 <input type="text" 
                     placeholder={placeholder} 
                     onChange={handleFilter}
                     />
 
-                <Dropdown countries={countries} 
-                          prompt='Select country...'
-                          
-                          />
+                <CountryDropDown className="dropdown" countries={countries}/>
 
                 <button className="submitButton" type="submit"></button>
 
             </form>
+
 
         </div>
     )

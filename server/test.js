@@ -68,14 +68,14 @@ const bearToken = `AAAAAAAAAAAAAAAAAAAAABgCUwEAAAAAulp6nbJYV0eZsgfF%2F35nkcbcfxg
 
 app.get("/api/countries", (req, res) => {
 
-  let country = `https://restcountries.com/v3.1/all/api/countries`
+  let country = `https://restcountries.com/v2/all/api/countries`
 
 
   const s3Key = `restcountries API: ${country}`; // Check S3
   const params = { Bucket: bucketName, Key: s3Key};
   // Try fetching the result from Redis first in case we have it cached
 
-  const url = "https://restcountries.com/v3.1/all"
+  const url = "https://restcountries.com/v2/all"
 
   return client.get(`restcountries API: ${country}`, (err, result) =>{
 

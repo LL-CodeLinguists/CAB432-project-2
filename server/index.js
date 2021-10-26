@@ -16,7 +16,7 @@ const bearToken = `AAAAAAAAAAAAAAAAAAAAABgCUwEAAAAAulp6nbJYV0eZsgfF%2F35nkcbcfxg
 
 app.get("/api/countries", (req, res) => {
 
-  const url = "https://restcountries.com/v3.1/all"
+  const url = "https://restcountries.com/v2/all"
 
   axios.get(url)
     .then(response => res.json(response.data))
