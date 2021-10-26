@@ -14,28 +14,27 @@ const twitterAPI = "https://api.twitter.com/1.1"
 const bearToken = `AAAAAAAAAAAAAAAAAAAAABgCUwEAAAAAulp6nbJYV0eZsgfF%2F35nkcbcfxg%3DOZypHZyuxqwyuai3ngiy2ZUiW4pMCgk93c5Qk8M3jxhsLHU0be`
 
 
-app.get("/api/countries", (req, res) => {
-
-  const url = "https://restcountries.com/v2/all"
-
-  axios.get(url)
-    .then(response => res.json(response.data))
-
-    .catch(e => {
-      console.log(e)
-    })
-})
-
 
 
 //search recent tweet
 app.get('/api/tweet/search', (req, res) => {
 
-  let query = req.query
-  console.log(query)
+  let searchQuery = req.query.q
+  let hashtag = null
+  let type = null
+
+  if (req.query.hasOwnProperty('h')){
+    hashtag = req.query.h
+  }
+  if (req.query.hasOwnProperty('t')){
+    type = req.query.t
+  }
+
+  let url = `${twitterAPI}/search/tweets.json?q=${searchQuery == null ? "" : searchQuery}${hashtag == null ? "" : "%23" + hashtag}&count=100&lang=en${type == null ? "" : "&result_type=" + type}`
+  console.log(url)
   var searchInRecentTweets = {
     method: "GET",
-    url: `${twitterAPI}/search/tweets.json?q=${query.q}&count=100&lang=en`,
+    url: url,
     headers: {
       'Authorization': `Bearer ${bearToken}`
     }
@@ -61,5 +60,5 @@ app.use((req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`App listening at port:${port}`)
 })

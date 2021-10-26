@@ -8,10 +8,19 @@ function useQuery() {
   }
 
 
-function SearchAllTweets(searchTerm){
-    const url = "/api/tweet/search?q=" + searchTerm
-    const [tweetArray, setTweetArray] = useState([])
 
+
+function SearchResult(){
+    
+    const query = useQuery()
+    const searchTerm = query.get("q")
+    const hashtag = query.get("h")
+    const type = query.get("t")
+    const [loading, setLoading] = useState(true)
+    const [tweets, setTweets] = useState([])
+
+    const url = `/api/tweet/search?q=${searchTerm}${hashtag == null ? '' : "&h=" + hashtag}${type == null ? '' : "&t=" + type.toLowerCase()}`
+    console.log(url)
     useEffect(
         () => {
             fetch(url)
@@ -24,56 +33,57 @@ function SearchAllTweets(searchTerm){
                     time: tweet.created_at,
                     name: tweet.user.name,
                     screen_name: tweet.user.screen_name,
-                    text: tweet.text,
-                    source: tweet.source
+                    text: tweet.text
                 }
                 return tweetObj
             }))
-            .then(res => setTweetArray(res))
+            .then(res => setTweets(res))
+            .then(res => setLoading(false))
         }
     , [url])
 
-    return tweetArray
-}
 
-function SearchResult(){
+    if (loading){
+        return(
+            <div>
+                <h1>Loading...</h1>
+            </div>
+        )
+    }else{
+        return(
+            <div>
+                <h1 className="search-heading">Found {tweets.length} tweets! {tweets.length == 0 ? "Please use other terms!" : ""}</h1>
+                <div className="results">
+                <Row xs={1} md={4} className="g-4">
+                {tweets.map(tweet => (
+                        <Col>
+                        <Card border="secondary" className="card">
+                            <Card.Header> 
+                                <Card.Title>{tweet.name}</Card.Title>
+                                <Card.Subtitle style={{color: "gray"}}>@{tweet.screen_name}</Card.Subtitle>
+                            </Card.Header>
+                            <Card.Body>
+                                <Card.Text>
+                                    {tweet.text}
+                                </Card.Text>
+                            </Card.Body>
+                            <Card.Footer>
+       
+                                <small className="text-muted">{tweet.time}</small>
+                            </Card.Footer>
+                        </Card>
+                        </Col>
     
-    const query = useQuery()
-    const searchTerm = query.get("q")
-
-    const tweets = SearchAllTweets(searchTerm)
-
-    return(
-        <div>
-            <div className="results">
-            <Row xs={1} md={4} className="g-4">
-            {tweets.map(tweet => (
-                    <Col>
-                    <Card border="secondary" className="card">
-                        <Card.Header> 
-                            <Card.Title>{tweet.name}</Card.Title>
-                            <Card.Subtitle style={{color: "gray"}}>@{tweet.screen_name}</Card.Subtitle>
-                        </Card.Header>
-                        <Card.Body>
-                            <Card.Text>
-                                {tweet.text}
-                            </Card.Text>
-                            <a type="button" href={tweet.source}>View original tweet</a>
-                        </Card.Body>
-                        <Card.Footer>
-   
-                            <small className="text-muted">{tweet.time}</small>
-                        </Card.Footer>
-                    </Card>
-                    </Col>
+    
+                ))}
+            </Row>
+    
+            </div>
+            </div>
+        )
+    }
 
 
-            ))}
-        </Row>
-
-        </div>
-        </div>
-    )
 }
 
 export default SearchResult
