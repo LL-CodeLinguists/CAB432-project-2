@@ -120,7 +120,8 @@ function SearchResult(){
         return(
             <div>
                 <h1 className="search-heading">Found {tweets.length} tweets containing '{searchTerm}' {hashtag == null ? '' : "with hashtag #" + hashtag} {type == null ? '' : "in " + type + " order"}! {tweets.length == 0 ? "Please use other terms!" : ""}</h1>
-                <SentimentBarchart sentiment={sentiment}/>
+                
+                {tweets.length == 0 ? <div></div> : <SentimentBarchart sentiment={sentiment}/>}
 
                 <div className="results">
 
