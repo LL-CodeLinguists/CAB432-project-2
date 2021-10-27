@@ -17,3 +17,36 @@ h1 {
 .loading {
     text-align: center;
 }
+
+#BarChart { 
+    display: flex; 
+    flex-direction: row; /* Arrange the Bars Horizontally using FlexBox  */
+    align-items: flex-end; /* Have the bars start at the bottom and go up */
+    justify-content: space-between;
+    width: 220px;
+    margin: auto;
+
+  }
+  
+
+
+#pgraphs {
+    display: flex;
+    justify-content: center;
+}
+
+#pgraphs p {
+    padding-left: 10px;
+    padding-right: 10px;
+    color: white;
+    font-weight: 800;
+}
+
+.graph{
+    text-align: center;
+}
+
+.graph h1 {
+    color: #FFB319;
+    text-align: center;
+}

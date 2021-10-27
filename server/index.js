@@ -3,6 +3,14 @@ const express = require('express')
 const axios = require('axios').default;
 const Twitter = require('twitter');
 const { response } = require('express');
+const natrual = require('natural')
+const aposToLexForm = require('apos-to-lex-form');
+const SW = require('stopword')
+const Analyzer = require('natural').SentimentAnalyzer;
+const stemmer = require('natural').PorterStemmer;
+
+
+
 const app = express()
 const port = 3000
 
@@ -12,8 +20,6 @@ app.use(express.static('../client/build'))
 
 const twitterAPI = "https://api.twitter.com/1.1"
 const bearToken = `AAAAAAAAAAAAAAAAAAAAABgCUwEAAAAAulp6nbJYV0eZsgfF%2F35nkcbcfxg%3DOZypHZyuxqwyuai3ngiy2ZUiW4pMCgk93c5Qk8M3jxhsLHU0be`
-
-
 
 
 //search recent tweet
@@ -30,7 +36,7 @@ app.get('/api/tweet/search', (req, res) => {
     type = req.query.t
   }
 
-  let url = `${twitterAPI}/search/tweets.json?q=${searchQuery == null ? "" : searchQuery}${hashtag == null ? "" : "%23" + hashtag}&count=100&lang=en${type == null ? "" : "&result_type=" + type}`
+  let url = `${twitterAPI}/search/tweets.json?q=${searchQuery == null ? "" : searchQuery}${hashtag == null ? "" : "%23" + hashtag}&count=100&lang=en${type == null ? "" : "&result_type=" + type}&tweet_mode=extended`
   console.log(url)
   var searchInRecentTweets = {
     method: "GET",
@@ -41,7 +47,15 @@ app.get('/api/tweet/search', (req, res) => {
   }
   axios.request(searchInRecentTweets)
     .then(response => {
-      res.json(response.data)
+
+        const tweetData = response.data
+        const {WordTokenizer} = natrual
+        const tokenizer = new WordTokenizer()
+        const analyzer = new Analyzer("English", stemmer, "afinn");
+        const sentimentAnalysisResults = tweetData.statuses.map(tweet => analyzer.getSentiment(SW.removeStopwords(tokenizer.tokenize(aposToLexForm(tweet.full_text).toLowerCase().replace(/[^a-zA-Z\s]+/g, '')))))
+    
+        res.json({tweetData: response.data, sentimentAnalysis: sentimentAnalysisResults})
+
       }
     )
     .catch(err =>
