@@ -37,7 +37,7 @@ app.get('/api/tweet/search', (req, res) => {
   }
 
   let url = `${twitterAPI}/search/tweets.json?q=${searchQuery == null ? "" : searchQuery}${hashtag == null ? "" : "%23" + hashtag}&count=100&lang=en${type == null ? "" : "&result_type=" + type}&tweet_mode=extended`
-  console.log(url)
+
   var searchInRecentTweets = {
     method: "GET",
     url: url,
@@ -47,14 +47,24 @@ app.get('/api/tweet/search', (req, res) => {
   }
   axios.request(searchInRecentTweets)
     .then(response => {
-
+        //res.json(response.data) raw data
         const tweetData = response.data
         const {WordTokenizer} = natrual
         const tokenizer = new WordTokenizer()
         const analyzer = new Analyzer("English", stemmer, "afinn");
         const sentimentAnalysisResults = tweetData.statuses.map(tweet => analyzer.getSentiment(SW.removeStopwords(tokenizer.tokenize(aposToLexForm(tweet.full_text).toLowerCase().replace(/[^a-zA-Z\s]+/g, '')))))
     
-        res.json({tweetData: response.data, sentimentAnalysis: sentimentAnalysisResults})
+        const filteredData = tweetData.statuses.map(tweet => {
+          let tweetObj = {
+              time: tweet.created_at,
+              name: tweet.user.name,
+              screen_name: tweet.user.screen_name,
+              text: tweet.full_text
+          }
+          return tweetObj
+        })
+
+        res.json({tweetData: filteredData, sentimentAnalysis: sentimentAnalysisResults})
 
       }
     )

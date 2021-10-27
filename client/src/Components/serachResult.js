@@ -82,24 +82,17 @@ function SearchResult(){
     const [loading, setLoading] = useState(true)
 
     const url = `/api/tweet/search?q=${searchTerm}${hashtag == null ? '' : "&h=" + hashtag}${type == null ? '' : "&t=" + type.toLowerCase()}`
-    console.log(url)
     useEffect(
         () => {
             fetch(url)
             .then(res => res.json())
             .then(res => {
+                console.log(res)
                 setSentiment(res.sentimentAnalysis)
                 setLoading(false)
-                return res.tweetData.statuses})
-            .then(res => res.map(tweet => {
-                let tweetObj = {
-                    time: tweet.created_at,
-                    name: tweet.user.name,
-                    screen_name: tweet.user.screen_name,
-                    text: tweet.full_text
-                }
-                return tweetObj
-            }))
+
+                return res.tweetData
+            })
             .then(res => {
                 setTweets(res)
                 setTweetLoading(false)
