@@ -31,7 +31,7 @@ client.on('error', (err) => {
 
 // Cloud Services Set-up
 // Create unique bucket name
-const bucketName = 'n10149899-twitter-store-2';
+const bucketName = 'n10149899-twitter-store-5';
 // Create a promise on S3 service object
 const bucketPromise = new AWS.S3({apiVersion: '2006-03-01'}).createBucket({Bucket: bucketName}).promise();
 
