@@ -31,7 +31,7 @@ client.on('error', (err) => {
 
 // Cloud Services Set-up
 // Create unique bucket name
-const bucketName = 'n10149899-twitter-store-5';
+const bucketName = 'n10149899-twitter-store';
 // Create a promise on S3 service object
 const bucketPromise = new AWS.S3({apiVersion: '2006-03-01'}).createBucket({Bucket: bucketName}).promise();
 
@@ -64,20 +64,6 @@ const bearToken = `AAAAAAAAAAAAAAAAAAAAABgCUwEAAAAAulp6nbJYV0eZsgfF%2F35nkcbcfxg
 
 //search recent tweet
 app.get('/api/tweet/search', (req, res) => {
-
-  // let query = req.query
-  // // console.log(query.q)
-
-  // // Try fetching the result from Redis first in case we have it cached
-
-  // var searchInRecentTweets = {
-  //   method: "GET",
-  //   url: `${twitterAPI}/search/tweets.json?q=${query.q}&count=100&lang=en`,
-  //   headers: {
-  //     'Authorization': `Bearer ${bearToken}`
-  //   }
-  // }
-
 
   let searchQuery = req.query.q
   let hashtag = null
