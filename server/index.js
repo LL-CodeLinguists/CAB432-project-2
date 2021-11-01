@@ -33,7 +33,22 @@ client.on('error', (err) => {
 // Create unique bucket name
 const bucketName = 'n10149899-twitter-store';
 // Create a promise on S3 service object
-const bucketPromise = new AWS.S3({apiVersion: '2006-03-01'}).createBucket({Bucket: bucketName}).promise();
+const bucketPromise = new AWS.S3({
+
+  
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "AllowAccessFromQUTAWSAccount",
+        "Effect": "Allow",
+        "Principal": { "AWS": "arn:aws:iam::901444280953:root" },
+        "Action": "s3:*",
+        "Resource": "arn:aws:s3:::n10149899-twitter-store/*"
+      }
+    ]
+  
+
+}).createBucket({Bucket: bucketName}).promise();
 
 bucketPromise.then(function(data) {
   console.log("Successfully created " + bucketName); })
